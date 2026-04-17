@@ -1,36 +1,116 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<div align="center">
 
-## Getting Started
+# 🎮 PokéExplorer
 
-First, run the development server:
+### Desafio Frontend — SiaPesq
+
+Uma aplicação web interativa para explorar o universo Pokémon, construída com tecnologias modernas e foco em UI/UX.
+
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+
+</div>
+
+---
+
+## 📋 Sobre o Projeto
+
+Aplicação desenvolvida como parte do **Desafio de Estágio Frontend da SiaPesq**, com o objetivo de demonstrar habilidades em construção de interfaces responsivas, dinâmicas e intuitivas.
+
+A aplicação consome dados em tempo real da [PokéAPI](https://pokeapi.co/) e conta com sistema de autenticação completo.
+
+---
+
+## 🖥️ Telas
+
+| Tela | Descrição |
+|------|-----------|
+| **🏠 Home** | Página de apresentação com hero section, features e call-to-action |
+| **🔐 Login** | Formulário de login com validação e feedback visual |
+| **📝 Registro** | Formulário de cadastro com confirmação de senha |
+| **📖 Pokédex** | Grid de Pokémon com busca, paginação e cards detalhados |
+
+---
+
+## 🚀 Tecnologias
+
+- **Next.js 16** — App Router, API Routes, SSR
+- **React 19** — Hooks, Context API
+- **TypeScript** — Tipagem estática
+- **Tailwind CSS 4** — Estilização utility-first
+- **Lucide React** — Ícones modernos
+- **PokéAPI** — API externa de dados Pokémon
+- **JWT + bcryptjs** — Autenticação segura
+
+---
+
+## ✨ Features
+
+- ✅ Design responsivo (mobile, tablet, desktop)
+- ✅ Animações e transições suaves
+- ✅ Busca de Pokémon em tempo real
+- ✅ Paginação na Pokédex
+- ✅ Cards com tipos, stats, altura e peso
+- ✅ Sistema de autenticação (login/registro)
+- ✅ API Routes no Next.js (backend integrado)
+- ✅ Navbar dinâmica com estado do usuário
+- ✅ Loading states e feedback visual
+
+---
+
+## 📦 Como Rodar
 
 ```bash
+# Clone o repositório
+git clone https://github.com/SEU_USUARIO/pokeexplorer-siapesq.git
+
+# Entre na pasta
+cd pokeexplorer-siapesq
+
+# Instale as dependências
+npm install
+
+# Rode o projeto
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Acesse **http://localhost:3000** no navegador.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📁 Estrutura do Projeto
 
-## Learn More
+```
+src/
+├── app/
+│   ├── api/auth/         # Rotas de autenticação (login/registro)
+│   ├── login/            # Página de login
+│   ├── registro/         # Página de registro
+│   ├── pokedex/          # Página da Pokédex
+│   ├── layout.tsx        # Layout raiz
+│   ├── page.tsx          # Página inicial (Home)
+│   └── globals.css       # Estilos globais e animações
+├── components/
+│   ├── Navbar.tsx         # Barra de navegação responsiva
+│   └── PokemonCard.tsx    # Card de Pokémon com stats
+├── contexts/
+│   └── AuthContext.tsx    # Context de autenticação
+└── lib/
+    └── auth.ts           # Utilitários de auth (JWT, bcrypt)
+```
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 👤 Autor
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**Michelangelo** — Desafio Frontend SiaPesq 2026
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+<div align="center">
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Feito com 💜 para o processo seletivo da **SiaPesq**
+
+</div>
