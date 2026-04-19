@@ -28,23 +28,30 @@ export default function PokedexPage() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
   const [total, setTotal] = useState(0);
+  const [error, setError] = useState("");
 
   const fetchPokemon = useCallback(async () => {
     setLoading(true);
+    setError("");
     try {
       const listRes = await fetch(
         `https://pokeapi.co/api/v2/pokemon?limit=${PER_PAGE}&offset=${page * PER_PAGE}`
       );
+      if (!listRes.ok) throw new Error(`Erro ${listRes.status}`);
       const listData = await listRes.json();
       setTotal(listData.count);
 
       const details = await Promise.all(
         listData.results.map((p: PokemonListItem) =>
-          fetch(p.url).then((r) => r.json())
+          fetch(p.url).then((r) => {
+            if (!r.ok) throw new Error(`Erro ${r.status}`);
+            return r.json();
+          })
         )
       );
       setPokemon(details);
-    } catch {
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro ao carregar Pokémon");
       setPokemon([]);
     } finally {
       setLoading(false);
@@ -114,6 +121,18 @@ export default function PokedexPage() {
             </button>
           </div>
         </div>
+
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
+            {error} —{" "}
+            <button
+              onClick={fetchPokemon}
+              className="underline font-medium hover:text-red-900"
+            >
+              Tentar novamente
+            </button>
+          </div>
+        )}
 
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-4">
