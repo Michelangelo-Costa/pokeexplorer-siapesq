@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from "react";
 import { useRouter } from "next/navigation";
+import { hash, compare } from "bcryptjs";
 
 interface User {
   name: string;
@@ -27,6 +28,8 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function getStoredUsers(): StoredUser[] {
   const data = localStorage.getItem("registeredUsers");
@@ -51,11 +54,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   async function login(email: string, password: string) {
+    if (!EMAIL_REGEX.test(email)) throw new Error("E-mail inválido");
+
     const users = getStoredUsers();
-    const found = users.find(
-      (u) => u.email === email && u.password === password
-    );
+    const found = users.find((u) => u.email === email);
+
     if (!found) throw new Error("Credenciais inválidas");
+
+    const valid = await compare(password, found.password);
+    if (!valid) throw new Error("Credenciais inválidas");
 
     const currentUser = { name: found.name, email: found.email };
     localStorage.setItem("currentUser", JSON.stringify(currentUser));
@@ -64,17 +71,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function register(name: string, email: string, password: string) {
+    if (!name.trim()) throw new Error("Nome é obrigatório");
+    if (!EMAIL_REGEX.test(email)) throw new Error("E-mail inválido");
+    if (password.length < 8) throw new Error("A senha deve ter pelo menos 8 caracteres");
+
     const users = getStoredUsers();
 
     if (users.some((u) => u.email === email)) {
       throw new Error("Este e-mail já está cadastrado");
     }
 
-    if (password.length < 6) {
-      throw new Error("A senha deve ter pelo menos 6 caracteres");
-    }
-
-    users.push({ name, email, password });
+    const hashed = await hash(password, 10);
+    users.push({ name, email, password: hashed });
     saveStoredUsers(users);
 
     const currentUser = { name, email };
