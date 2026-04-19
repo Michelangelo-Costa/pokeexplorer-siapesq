@@ -1,9 +1,11 @@
 import { SignJWT, jwtVerify } from "jose";
 import { hash, compare } from "bcryptjs";
 
-const SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "siapesq-secret-key-dev-2024"
-);
+if (!process.env.JWT_SECRET) {
+  throw new Error("JWT_SECRET não definido. Configure o arquivo .env.local");
+}
+
+const SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
 
 export async function hashPassword(password: string) {
   return hash(password, 12);
