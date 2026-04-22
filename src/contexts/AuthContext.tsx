@@ -4,7 +4,6 @@ import {
   createContext,
   useContext,
   useState,
-  useEffect,
   type ReactNode,
 } from "react";
 import { useRouter } from "next/navigation";
@@ -41,17 +40,17 @@ function saveStoredUsers(users: StoredUser[]) {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
-
-  useEffect(() => {
-    const stored = localStorage.getItem("currentUser");
-    if (stored) {
-      setUser(JSON.parse(stored));
+  const [user, setUser] = useState<User | null>(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("currentUser");
+      return stored ? JSON.parse(stored) : null;
     }
-    setLoading(false);
-  }, []);
+    return null;
+  });
+  const [loading] = useState(() => {
+    return typeof window === "undefined";
+  });
+  const router = useRouter();
 
   async function login(email: string, password: string) {
     if (!EMAIL_REGEX.test(email)) throw new Error("E-mail inválido");
