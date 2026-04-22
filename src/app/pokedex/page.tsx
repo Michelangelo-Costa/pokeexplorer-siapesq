@@ -1,9 +1,32 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
-import PokemonCard from "@/components/PokemonCard";
-import { Search, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight } from "lucide-react";
+import PokemonModal from "@/components/PokemonModal";
+import { PokemonCardClickable } from "@/components/PokemonCard";
+import PokemonCardSkeleton from "@/components/PokemonCardSkeleton";
+
+const TYPE_COLORS: Record<string, string> = {
+  normal: "bg-gray-400",
+  fire: "bg-orange-500",
+  water: "bg-blue-500",
+  electric: "bg-yellow-400",
+  grass: "bg-green-500",
+  ice: "bg-cyan-400",
+  fighting: "bg-red-700",
+  poison: "bg-purple-500",
+  ground: "bg-amber-600",
+  flying: "bg-indigo-300",
+  psychic: "bg-pink-500",
+  bug: "bg-lime-500",
+  rock: "bg-amber-700",
+  ghost: "bg-purple-700",
+  dragon: "bg-violet-700",
+  dark: "bg-gray-700",
+  steel: "bg-slate-400",
+  fairy: "bg-pink-300",
+};
 
 interface PokemonListItem {
   name: string;
@@ -30,49 +53,73 @@ export default function PokedexPage() {
   const [total, setTotal] = useState(0);
   const [error, setError] = useState("");
 
-  const fetchPokemon = useCallback(async () => {
-    setLoading(true);
-    setError("");
-    try {
-      const listRes = await fetch(
-        `https://pokeapi.co/api/v2/pokemon?limit=${PER_PAGE}&offset=${page * PER_PAGE}`
-      );
-      if (!listRes.ok) throw new Error(`Erro ${listRes.status}`);
-      const listData = await listRes.json();
-      setTotal(listData.count);
-
-      const details = await Promise.all(
-        listData.results.map((p: PokemonListItem) =>
-          fetch(p.url).then((r) => {
-            if (!r.ok) throw new Error(`Erro ${r.status}`);
-            return r.json();
-          })
-        )
-      );
-      setPokemon(details);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao carregar Pokémon");
-      setPokemon([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [page]);
+  const [selected, setSelected] = useState<PokemonData | null>(null);
+  const [types, setTypes] = useState<string[]>([]);
+  const [selectedType, setSelectedType] = useState("");
 
   useEffect(() => {
-    fetchPokemon();
-  }, [fetchPokemon]);
+    fetch("https://pokeapi.co/api/v2/type")
+      .then((res) => res.json())
+      .then((data) =>
+        setTypes(data.results.map((t: { name: string }) => t.name)),
+      );
+  }, []);
+
+  const [retryCount, setRetryCount] = useState(0);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setLoading(true);
+      setError("");
+      try {
+        const listRes = await fetch(
+          `https://pokeapi.co/api/v2/pokemon?limit=${PER_PAGE}&offset=${page * PER_PAGE}`,
+        );
+        if (!listRes.ok) throw new Error(`Erro ${listRes.status}`);
+        const listData = await listRes.json();
+        if (cancelled) return;
+        setTotal(listData.count);
+
+        const details = await Promise.all(
+          listData.results.map((p: PokemonListItem) =>
+            fetch(p.url).then((r) => {
+              if (!r.ok) throw new Error(`Erro ${r.status}`);
+              return r.json();
+            }),
+          ),
+        );
+        if (cancelled) return;
+        setPokemon(details);
+      } catch (err) {
+        if (cancelled) return;
+        setError(err instanceof Error ? err.message : "Erro ao carregar Pokémon");
+        setPokemon([]);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [page, retryCount]);
 
   const filtered = search
-    ? pokemon.filter((p) =>
-        p.name.toLowerCase().includes(search.toLowerCase())
-      )
+    ? pokemon.filter((p) => p.name.toLowerCase().includes(search.toLowerCase()))
     : pokemon;
+
+  const filteredByType = selectedType
+    ? filtered.filter((p) => p.types.some((t) => t.type.name === selectedType))
+    : filtered;
 
   const totalPages = Math.ceil(total / PER_PAGE);
 
   return (
     <>
       <Navbar />
+      <PokemonModal
+        open={!!selected}
+        onClose={() => setSelected(null)}
+        pokemon={selected}
+      />
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         <div className="mb-10">
           <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-2">
@@ -122,11 +169,37 @@ export default function PokedexPage() {
           </div>
         </div>
 
+        <div className="flex flex-wrap gap-2 mb-8">
+          <button
+            onClick={() => setSelectedType("")}
+            className={`px-4 py-2 rounded-full text-sm font-medium border transition-all ${
+              !selectedType
+                ? "bg-primary-500 text-white border-primary-500"
+                : "bg-white text-slate-600 border-slate-200 hover:bg-primary-50"
+            }`}
+          >
+            Todos
+          </button>
+          {types.map((type) => (
+            <button
+              key={type}
+              onClick={() => setSelectedType(type)}
+              className={`px-4 py-2 rounded-full text-sm font-medium border capitalize transition-all ${
+                selectedType === type
+                  ? `${TYPE_COLORS[type] || "bg-primary-500 text-white border-primary-500"} text-white border-0`
+                  : `${TYPE_COLORS[type] || "bg-white text-slate-600 border-slate-200"} bg-white text-slate-600 border-slate-200 hover:bg-primary-50`
+              }`}
+            >
+              {type}
+            </button>
+          ))}
+        </div>
+
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
             {error} —{" "}
             <button
-              onClick={fetchPokemon}
+              onClick={() => setRetryCount((c) => c + 1)}
               className="underline font-medium hover:text-red-900"
             >
               Tentar novamente
@@ -135,20 +208,25 @@ export default function PokedexPage() {
         )}
 
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-20 gap-4">
-            <Loader2 size={40} className="text-primary-500 animate-spin" />
-            <p className="text-slate-500">Carregando Pokémon...</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <PokemonCardSkeleton count={PER_PAGE} />
           </div>
-        ) : filtered.length === 0 ? (
+        ) : filteredByType.length === 0 ? (
           <div className="text-center py-20">
             <p className="text-slate-500 text-lg">
               Nenhum Pokémon encontrado para &quot;{search}&quot;
+              {selectedType ? ` do tipo ${selectedType}` : ""}
             </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filtered.map((p, i) => (
-              <PokemonCard key={p.id} pokemon={p} index={i} />
+            {filteredByType.map((p, i) => (
+              <PokemonCardClickable
+                key={p.id}
+                pokemon={p}
+                index={i}
+                onClick={() => setSelected(p)}
+              />
             ))}
           </div>
         )}
