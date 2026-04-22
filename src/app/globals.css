@@ -30,23 +30,44 @@ body {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
 }
 
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 .animate-fade-in {
@@ -66,4 +87,67 @@ body {
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   border-radius: 8px;
+}
+
+@media (prefers-color-scheme: dark) {
+  html.dark body {
+    background: #181825;
+    color: #f1f5f9;
+  }
+  html.dark .bg-white,
+  html.dark .bg-white\/80,
+  html.dark .bg-white\/95 {
+    background-color: #232336 !important;
+  }
+  html.dark .text-slate-900,
+  html.dark .text-slate-800 {
+    color: #f1f5f9 !important;
+  }
+  html.dark .text-slate-600,
+  html.dark .text-slate-500 {
+    color: #cbd5e1 !important;
+  }
+  html.dark .border-slate-100,
+  html.dark .border-primary-100 {
+    border-color: #232336 !important;
+  }
+  html.dark .shadow-md,
+  html.dark .shadow-xl,
+  html.dark .shadow-2xl {
+    box-shadow: 0 2px 8px 0 #0004 !important;
+  }
+  html.dark .bg-primary-50,
+  html.dark .bg-primary-100 {
+    background-color: #232336 !important;
+  }
+  html.dark .bg-gradient-to-br,
+  html.dark .bg-linear-to-br,
+  html.dark .bg-gradient-to-r,
+  html.dark .bg-linear-to-r,
+  html.dark .bg-gradient-to-b,
+  html.dark .bg-linear-to-b {
+    filter: brightness(0.8) contrast(1.1);
+  }
+  html.dark .bg-slate-100,
+  html.dark .bg-slate-200 {
+    background-color: #232336 !important;
+  }
+  html.dark .text-primary-700 {
+    color: #a5b4fc !important;
+  }
+  html.dark .bg-primary-50\/60 {
+    background-color: #23233699 !important;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .page-transition {
+    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .page-exit {
+    opacity: 0;
+  }
+  .page-enter {
+    opacity: 1;
+  }
 }
