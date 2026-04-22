@@ -4,6 +4,7 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import { useAuth } from "@/contexts/AuthContext";
 import { Compass, Shield, Zap, Sparkles, ArrowRight } from "lucide-react";
+import PokeballParticles from "@/components/PokeballParticles";
 
 const FEATURES = [
   {
@@ -35,7 +36,9 @@ export default function HomePage() {
     <>
       <Navbar />
       <main className="flex-1">
-        <section className="relative overflow-hidden bg-gradient-to-br from-primary-600 via-primary-700 to-primary-900 text-white">
+        <section className="relative overflow-hidden bg-linear-to-br from-primary-600 via-primary-700 to-primary-900 text-white">
+          {/* Pokébolas flutuantes animadas */}
+          <PokeballParticles />
           <div className="absolute inset-0 opacity-10">
             <div className="absolute top-20 left-10 w-72 h-72 bg-accent-400 rounded-full blur-3xl" />
             <div className="absolute bottom-10 right-20 w-96 h-96 bg-primary-300 rounded-full blur-3xl" />
@@ -51,7 +54,7 @@ export default function HomePage() {
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight tracking-tight mb-6">
                 Explore o mundo
                 <br />
-                <span className="bg-gradient-to-r from-accent-400 to-pink-300 bg-clip-text text-transparent">
+                <span className="bg-linear-to-r from-accent-400 to-pink-300 bg-clip-text text-transparent">
                   Pokémon
                 </span>
               </h1>
@@ -120,7 +123,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="bg-gradient-to-r from-primary-600 to-primary-800 text-white">
+        <section className="bg-linear-to-r from-primary-600 to-primary-800 text-white">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
             <h2 className="text-2xl sm:text-3xl font-bold mb-4">
               Pronto para começar?
