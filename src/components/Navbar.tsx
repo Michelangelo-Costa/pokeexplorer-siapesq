@@ -3,8 +3,19 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import { Menu, X, LogOut, Compass, Home, LogIn, UserPlus } from "lucide-react";
+import {
+  Menu,
+  X,
+  LogOut,
+  Compass,
+  Home,
+  LogIn,
+  UserPlus,
+  Moon,
+  Sun,
+} from "lucide-react";
 import { useState } from "react";
+import { useTheme } from "@/contexts/ThemeContext";
 
 const NAV_ITEMS = [
   { href: "/", label: "Início", icon: Home },
@@ -15,6 +26,7 @@ export default function Navbar() {
   const { user, logout } = useAuth();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const { theme, mounted, toggleTheme } = useTheme();
 
   const isAuth = pathname === "/login" || pathname === "/registro";
   if (isAuth) return null;
@@ -80,6 +92,18 @@ export default function Navbar() {
                   Cadastrar
                 </Link>
               </>
+            )}
+            {mounted && (
+              <button
+                onClick={toggleTheme}
+                className="p-2 rounded-lg text-slate-600 hover:bg-primary-50 transition-all w-full flex items-center gap-2"
+                aria-label="Alternar tema"
+              >
+                {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+                <span className="text-sm">
+                  {theme === "dark" ? "Claro" : "Escuro"}
+                </span>
+              </button>
             )}
           </div>
 
